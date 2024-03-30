@@ -1,4 +1,6 @@
 node_modules
 server/build
-server/src
+server/src/historicaldata
+server/src/historicaldata_backup
 client
+*.zip

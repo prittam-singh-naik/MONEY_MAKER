@@ -1,0 +1,4 @@
+
+
+export const BINANCE_API_KEY = 'Ky0TkaFl9E93iVMbY2tMBu6PeGrZgt7qAauylGxqqe5uuOZXL66tRjufVJCAahda'
+export const BINANCE_API_SECRET = 'ziCua39M2QB01EWA8yn7g3Z7jnBm3zXcrBOZ6kQnwESrp6WBvdS0Ongtp8J37A49'

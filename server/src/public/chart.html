@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+                #chart-container {
+                        width: 100%;
+                        overflow-x: auto;
+                }
+
+                #myChart {
+                        width: 100% !important;
+                        /* Set a fixed width or adjust as needed */
+                        height: 100% !important;
+                }
+        </style>
+</head>
+
+<body>
+
+</body>
+<!-- <h1>Hello world</h1> -->
+<div id="chart-container">
+        <canvas id="myChart"></canvas>
+</div>
+
+<script src="./chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.js"></script>
+<script>
+        const ctx = document.getElementById('myChart')
+
+        async function fetchData() {
+                const response = await fetch('http://localhost:9098/data');
+
+                if (!response.body) {
+                        console.error('Response does not contain a readable stream.');
+                        return;
+                }
+                const textDecoder = new TextDecoder();
+                const reader = response.body.getReader();
+
+                let chunkData = ''
+                while (true) {
+                        const { done, value } = await reader.read()
+
+                        if (done) {
+                                console.log('Stream completed.')
+                                break
+                        }
+
+                        const chunk = textDecoder.decode(value)
+                        // priceData = [...priceData, ...JSON.parse(chunk)]
+                        chunkData += chunk
+                }
+
+
+                const price = JSON.parse(chunkData)//.filter((e, index) => index < 1440)
+                console.log(price[0])
+                // new Chart(ctx, {
+                //         type: 'line',
+                //         data: {
+                //                 labels: price[0],
+                //                 datasets: [{
+                //                         label: '',
+                //                         data: price[0],
+                //                         fill: false,
+                //                         borderColor: 'rgb(75, 192, 192)',
+                //                         tension: 0.1
+                //                 }]
+                //         },
+                // })
+                const data = price[0]//[65, 59, 80, 81, 56, 55, 40]
+                new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                                labels: data,
+                                datasets: [{
+                                        label: 'My First Dataset',
+                                        data: data,
+                                        fill: false,
+                                        borderColor: 'rgb(75, 192, 192)',
+                                        tension: 0.1
+                                }]
+                        },
+                        options: {
+                                plugins: {
+                                        zoom: {
+                                                zoom: {
+                                                        wheel: {
+                                                                enabled: true,
+                                                        },
+                                                        pinch: {
+                                                                enabled: true
+                                                        },
+                                                        mode: 'xy',
+                                                }
+                                        }
+                                }
+                        }
+                })
+                // .register(zoomPlugin);
+
+                console.log(`loaded`)
+
+
+
+        }
+        // fetchData()
+
+</script>
+
+</html>

@@ -1,5 +1,14 @@
 node_modules
 server/build
-server/src/historicaldata_backup
+# server/src/historicaldata_backup
 client
 *.zip
+*BANKNIFTY*.js
+*2015*.js
+*2016*.js
+*2017*.js
+*2018*.js
+*2019*.js
+*2020*.js
+*2021*.js
+*2022*.js

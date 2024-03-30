@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ENVIRNMENT=LIVE node build/server.js",
+    "build": "tsc",
+    "dev": "ENVIRNMENT=DEVELOPMENT nodemon src/server.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "github:types/express",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/morgan": "^1.9.9",
+    "@types/node-cron": "^3.0.8",
+    "@types/ws": "^8.5.5",
+    "asciichart": "^1.5.25",
+    "binance-api-node": "^0.12.7",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "fib-retracement": "^0.2.1",
+    "fibonacci": "^1.6.11",
+    "mongodb": "^6.3.0",
+    "mongoose": "^7.4.5",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.2",
+    "otplib": "^12.0.1",
+    "smartapi-javascript": "^1.0.21",
+    "ws": "^8.13.0"
+  }
+}

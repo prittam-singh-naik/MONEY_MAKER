@@ -1,5 +1,5 @@
 const asciichart = require('asciichart');
-const { getFibRetracement, levels } = require('fib-retracement')
+let { getFibRetracement, levels } = require('fib-retracement')
 const data = require('./historicaldata/21_02_2024_BANKNIFTY_ONE_MINUTE')
 const liveData = require('./livedata/19Jan2024')
 
@@ -203,22 +203,30 @@ const findSwings = (price, time) => {
 const checkFibLabelTouch = (price, time) => {
         try {
                 swingListNew.forEach((swing, index) => {
-                        
-                        if (swing.isDeleted) {
 
-                                if (swing['1-Touch']) return
-                                swing['1-Touch'] = true
+
 
                                 swing.detailWhenLevelTouch.forEach(entry => {
 
-                                        if (!entry.notReverse && !entry.reversed) {
+                                        const checkSL = swing.entryType === UP ? entry.SL < price : entry.SL > price
+
+                                        if (!entry.notReverse && !entry.reversed && checkSL) {
                                                 entry.notReverse = true
                                                 entry.notReverseTime = time
                                         }
                                 })
 
-                                return
-                        }
+
+                        
+                        if (swing.isDeleted) return
+
+
+
+
+
+
+
+
 
                         const fibList = ['1', '0.786', '0.618', '0.5', '0.382', '0.236']
                         for (let fibKey of fibList) {
@@ -252,32 +260,38 @@ const checkFibLabelTouch = (price, time) => {
 
                                 if (swing.direction === DOWN && price >= lowerLevel && !swing[fibKey + '-Touch']) {
 
-                                        swing[fibKey + '-Touch'] = true
-                                        swing.lastReverseFrom = fibKey
+
 
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== START
 
-                                        if (fibKey === '0.786') {
-
-                                                swing.detailWhenLevelTouch.push({
-                                                        fibKey,
-                                                        // reversedFrom: swing.reversedFrom,
-                                                        levelTouchTime: time,
-                                                        direction: swing.direction,
-                                                        reversed: false,
-                                                        notReverse: false,
-                                                        swingStart: swing.start,
-                                                        swingEnd: swing.end,
-                                                })
-
-
-
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL ============= START
 
-                                                const lastSwingDetails = swingListNew.filter(e => e.direction === UP && e.end === price).sort((a, b) => b.start - a.start)
-                                                const previousSwingIndex = swingListNew.findLastIndex(e => e.direction === UP && e.end === price && e.start === lastSwingDetails[0].start)
+                                                const currentSwing = swingListNew[swingListNew.length - 1]
+                                                const previousSwingIndex = currentSwing.direction === UP && currentSwing.end === price ? swingListNew.length - 1 : -1
 
                                                 if (previousSwingIndex > -1) {
+
+
+                                                swing.entryDetail = swing.entryDetail || {}
+                                                swing.entryDetail[fibKey + '-entryCount'] = (swing.entryDetail[fibKey + '-entryCount'] || 0) + 1
+
+                                                        swing.detailWhenLevelTouch.push({
+                                                                entryPrice: price,
+                                                                SL: price + 10,
+                                                                entryTime: time,
+                                                                entryType: swing.direction,
+                                                                entryLevel: fibKey,
+                                                                // reversedFrom: swing.reversedFrom,
+                                                                levelTouchTime: time,
+                                                                direction: swing.direction,
+                                                                reversed: false,
+                                                                notReverse: false,
+                                                                swingStart: swing.start,
+                                                                swingEnd: swing.end,
+                                                                previousSwingLastReversedFrom: swingListNew[previousSwingIndex].lastReverseFrom,
+                                                                currentSwingLastReversedFrom: swing.lastReverseFrom,
+                                                                entryCountOfFibLevel: swing.entryDetail[fibKey + '-entryCount'],
+                                                        })
 
                                                         swingListNew[previousSwingIndex].swingListToRevesedCheck.push({
                                                                 reverseChecked: false,
@@ -285,37 +299,43 @@ const checkFibLabelTouch = (price, time) => {
                                                                 swingIndex: index,
                                                                 touchLevelindex: swing.detailWhenLevelTouch.length - 1
                                                         })
-                                                }
-                                                if (time === '1:17:00 pm' && swing.start === 47282.5) {
-                                                        console.table(swingListNew.map(e => ({ s: e.start, e: e.end, d: e.direction, sTime: e.swingStartTime })))
+                                                } else {
+                                                        // Remove entry if there no swing on between, because it is not more than minswingh length
+                                                        // swing.detailWhenLevelTouch.pop()
                                                 }
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL ============= END
 
-
-                                        }
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== END
 
 
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= START
 
-                                        if (swing.swingListToRevesedCheck.length) {
-                                                
-                                                swing.swingListToRevesedCheck.forEach( reverseCheckSwing => {
+                                        if (fibKey === '0.236') {
 
-                                                        const touchLevelDetails = swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex]
-                                                        if (!touchLevelDetails.notReverse && !touchLevelDetails.reversed) {
-        
-                                                                swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversed = true
-                                                                swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversedTime = time
-                                                        }
-                                                })
+                                                if (swing.swingListToRevesedCheck.length) {
 
-                                                swing.swingListToRevesedCheck = []
+                                                        swing.swingListToRevesedCheck.forEach(reverseCheckSwing => {
+
+                                                                const touchLevelDetails = swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex]
+                                                                if (!touchLevelDetails.notReverse && !touchLevelDetails.reversed) {
+
+                                                                        swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversed = true
+                                                                        swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversedTime = time
+                                                                }
+                                                        })
+
+                                                        swing.swingListToRevesedCheck = []
+                                                }
                                         }
 
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= END
 
 
+
+
+
+                                        swing[fibKey + '-Touch'] = true
+                                        swing.lastReverseFrom = fibKey
                                         break
                                 }
 
@@ -330,18 +350,27 @@ const checkFibLabelTouch = (price, time) => {
 
                                 if (swing.direction === UP && price <= upperLevel && !swing[fibKey + '-Touch']) {
 
-                                        swing[fibKey + '-Touch'] = true
-                                        swing.lastReverseFrom = fibKey
 
 
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== START
 
-                                        if (fibKey === '0.786') {
-                                                
+                                                // MARK LAST SWING WHEN TOUCH A LEVEL =============START
+
+                                                const currentSwing = swingListNew[swingListNew.length - 1]
+                                                const previousSwingIndex = currentSwing.direction === DOWN && currentSwing.end === price ? swingListNew.length - 1 : -1
+
+                                                if (previousSwingIndex > -1) {
+
+                                                swing.entryDetail = swing.entryDetail || {}
+                                                swing.entryDetail[fibKey + '-entryCount'] = (swing.entryDetail[fibKey + '-entryCount'] || 0) + 1
 
                                                 swing.detailWhenLevelTouch.push({
                                                         // INDEX: swing.detailWhenLevelTouch.length,
-                                                        fibKey,
+                                                        entryPrice: price,
+                                                        SL: price - 10,
+                                                        entryTime: time,
+                                                        entryLevel: fibKey,
+                                                        entryType: swing.direction,
                                                         // reversedFrom: swing.reversedFrom,
                                                         direction: swing.direction,
                                                         levelTouchTime: time,
@@ -349,14 +378,10 @@ const checkFibLabelTouch = (price, time) => {
                                                         notReverse: false,
                                                         swingStart: swing.start,
                                                         swingEnd: swing.end,
+                                                        previousSwingLastReversedFrom: swingListNew[previousSwingIndex].lastReverseFrom,
+                                                        currentSwingLastReversedFrom: swing.lastReverseFrom,
+                                                        entryCountOfFibLevel: swing.entryDetail[fibKey + '-entryCount'],
                                                 })
-
-                                                // MARK LAST SWING WHEN TOUCH A LEVEL =============START
-
-                                                const lastSwingDetails = swingListNew.filter(e => e.direction === DOWN && e.end === price).sort((a, b) => a.start - b.start)
-                                                const previousSwingIndex = swingListNew.findLastIndex(e => e.direction === DOWN && e.end === price && e.start === lastSwingDetails[0].start)
-
-                                                if (previousSwingIndex > -1) {
 
                                                         swingListNew[previousSwingIndex].swingListToRevesedCheck.push({
                                                                 reverseChecked: false,
@@ -364,47 +389,49 @@ const checkFibLabelTouch = (price, time) => {
                                                                 swingIndex: index,
                                                                 touchLevelindex: swing.detailWhenLevelTouch.length - 1
                                                         })
+                                                } else {
+                                                        // Remove entry if there no swing on between, because it is not more than minswingh length
+                                                        // swing.detailWhenLevelTouch.pop()
                                                 }
 
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL =============END
 
-
-
-                                        }
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== END
 
 
 
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= START
-                                        if (swing.swingListToRevesedCheck.length) {
-                                                
-                                                swing.swingListToRevesedCheck.forEach( reverseCheckSwing => {
 
-                                                        const touchLevelDetails = swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex]
-                                                        if (!touchLevelDetails.notReverse && !touchLevelDetails.reversed) {
-        
-                                                                swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversed = true
-                                                                swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversedTime = time
-                                                        }
-                                                })
+                                        if (fibKey === '0.236') {
+                                                if (swing.swingListToRevesedCheck.length) {
 
-                                                swing.swingListToRevesedCheck = []
+                                                        swing.swingListToRevesedCheck.forEach(reverseCheckSwing => {
+
+                                                                const touchLevelDetails = swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex]
+                                                                if (!touchLevelDetails.notReverse && !touchLevelDetails.reversed) {
+
+                                                                        swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversed = true
+                                                                        swingListNew[reverseCheckSwing.swingIndex].detailWhenLevelTouch[reverseCheckSwing.touchLevelindex].reversedTime = time
+                                                                }
+                                                        })
+
+                                                        swing.swingListToRevesedCheck = []
+                                                }
                                         }
+
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= END
 
 
+
+
+                                        swing[fibKey + '-Touch'] = true
+                                        swing.lastReverseFrom = fibKey
                                         break
                                 }
 
 
 
 
-
-
-
-
-
-                                
                         }
                 })
         } catch (err) {
@@ -445,16 +472,46 @@ swingListNew.forEach(e => {
         
         notReveseList = [ ...notReveseList, ...(e.detailWhenLevelTouch || []) ]
 })
-console.table(notReveseList.filter(e => !e.notReverse && !e.reversed))
+// console.table(notReveseList.filter(e => !e.notReverse && !e.reversed))
+// console.table(notReveseList.filter(e => e.notReverse))
+// console.table(notReveseList.filter(e => e.reversed))
+// console.table(notReveseList.filter(e => e.reversed && !e.reEntry05))
+console.table(notReveseList.map(e => ({
+        fibKey: e.entryLevel,
+        fibEntryCount: e.entryCountOfFibLevel,
+        // levelTouchTime: e.levelTouchTime,
+        direction: e.direction,
+        reversed: e.reversed,
+        notReverse: e.notReverse,
+        swingStart: e.swingStart,
+        swingEnd: e.swingEnd,
+        PSLRF: e.previousSwingLastReversedFrom,
+        CSLRF: e.currentSwingLastReversedFrom,
+
+        // reversedTime: e.reversedTime,
+        // reEntry05: e.reEntry05,
+        // reEntry06: e.reEntry06,
+        // reEntry07: e.reEntry07,
+        // reEntry10: e.reEntry,
+        // secEntry12: e.secEntry,
+        // ...e
+})).filter((e, index) => index < 20))
+// console.log(swingListNew[10])
+
+
+console.log(`Reversed from 0.236: `, notReveseList.filter(e => e.entryLevel === '0.236').length)
+console.log(`Reversed from 0.382: `, notReveseList.filter(e => e.entryLevel === '0.382').length)
+console.log(`Reversed from 0.5:   `, notReveseList.filter(e => e.entryLevel === '0.5'  ).length)
+console.log(`Reversed from 0.618: `, notReveseList.filter(e => e.entryLevel === '0.618').length)
+console.log(`Reversed from 0.786: `, notReveseList.filter(e => e.entryLevel === '0.786').length)
+console.log(`Reversed from 1:     `, notReveseList.filter(e => e.entryLevel === '1'    ).length)
+console.log(`Reversed from 1.272: `, notReveseList.filter(e => e.entryLevel === '1.272').length)
+
+
 console.log(`Neutral `, notReveseList.filter(e => !e.notReverse && !e.reversed).length)
 console.log(`Reversed `, notReveseList.filter(e => e.reversed).length)
 console.log(`Not Reversed `, notReveseList.filter(e => e.notReverse).length)
 // console.table(swingListNew.map(e => ({ start: e.start, end: e.end, high: e.high, low: e.low, direction: e.direction, swingStartTime: e.swingStartTime })))
-
-
-
-
-
 
 
 
@@ -519,24 +576,3 @@ function fillPriceGaps(priceArray) {
 
         return filledPrices;
 }
-
-
-
-
-
-// // const finCorpLoan = 5695//8273
-// const finCorpLoan = 8273
-// const kreditBeeLoan = 13735
-// const stashFinLoan = 4171    //Close from EPF
-// const hdfcLoan = 32100
-// const SBICreditCard = 2222
-// const ICICreditCard = 3464
-// // const axisCreditCard = 7348//10743
-// const axisCreditCard = 10743
-// const yesBankLoan = 1200
-// const yesBankCreditCard = 2117
-// const total11 = finCorpLoan + kreditBeeLoan + stashFinLoan + hdfcLoan + SBICreditCard + ICICreditCard + axisCreditCard + yesBankLoan + yesBankCreditCard
-// console.log(total11)
-
-
-

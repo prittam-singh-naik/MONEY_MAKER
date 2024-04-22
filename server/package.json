@@ -26,12 +26,14 @@
     "express": "^4.18.2",
     "fib-retracement": "^0.2.1",
     "fibonacci": "^1.6.11",
+    "indicatorts": "^2.2.0",
     "mongodb": "^6.3.0",
     "mongoose": "^7.4.5",
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
     "otplib": "^12.0.1",
     "smartapi-javascript": "^1.0.21",
+    "trading-signals": "^5.0.1",
     "ws": "^8.13.0"
   }
 }

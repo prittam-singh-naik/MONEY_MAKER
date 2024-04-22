@@ -208,131 +208,15 @@ const findSwings = (price, time) => {
 
 const checkFibLabelTouch = (price, time, EMA) => {
         try {
+                const fibList = ['1.618', '1.272', '1', '0.786', '0.618', '0.5', '0.382', '0.236']
+
                 swingListNew.forEach((swing, index) => {
-                        
-                        if (swing.isDeleted) {
-
-                                if (!swing['1-Touch']) {
-
-                                        swing['1-Touch'] = true
-        
-                                        swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                                if (!entry.notReverse && !entry.reversed && !entry.reEntry) {
-                                                        entry.reEntry = true
-                                                        // entry.reEntryTime = time
-                                                }
-                                        })
-                                }
 
 
-
-                                // const lowerLevel = swing.fibLevel['1.272'] - 1
-                                // const upperLevel = swing.fibLevel['1.272'] + 1
-
-                                // if (swing.direction === DOWN && price >= lowerLevel && !swing['1.272-Touch']) {
-
-                                //         swing['1.272-Touch'] = true
-                                //         swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                //                 if (!entry.notReverse && !entry.reversed && entry.reEntry) {
-                                //                         entry.notReverse = true
-                                //                         entry.notReverseTime = time
-                                //                 }
-                                //         })
-
-                                // }
-
-                                // if (swing.direction === UP && price <= upperLevel && !swing['1.272-Touch']) {
-
-                                //         swing['1.272-Touch'] = true
-                                //         swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                //                 if (!entry.notReverse && !entry.reversed && entry.reEntry) {
-                                //                         entry.notReverse = true
-                                //                         entry.notReverseTime = time
-                                //                 }
-                                //         })
-
-                                // }
-
-
-
-
-                                const lowerLevel = swing.fibLevel['1.272'] - 1
-                                const upperLevel = swing.fibLevel['1.272'] + 1
-
-                                if (swing.direction === DOWN && price >= lowerLevel && !swing['1.272-Touch']) {
-
-                                        swing['1.272-Touch'] = true
-                                        swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                                if (!entry.notReverse && !entry.reversed && !entry.secEntry) {
-                                                        entry.secEntry = true
-                                                        // entry.secEntryTime = time
-                                                }
-                                        })
-
-                                }
-
-                                if (swing.direction === UP && price <= upperLevel && !swing['1.272-Touch']) {
-
-                                        swing['1.272-Touch'] = true
-                                        swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                                if (!entry.notReverse && !entry.reversed && !entry.secEntry) {
-                                                        entry.secEntry = true
-                                                        // entry.secEntryTime = time
-                                                }
-                                        })
-
-                                }
-                                const lowerLevel1 = swing.fibLevel['1.618'] - 1
-                                const upperLevel1 = swing.fibLevel['1.618'] + 1
-
-                                if (swing.direction === DOWN && price >= lowerLevel1 && !swing['1.618-Touch']) {
-
-                                        swing['1.618-Touch'] = true
-                                        swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                                if (!entry.notReverse && !entry.reversed) {
-                                                        entry.notReverse = true
-                                                        // entry.notReverseTime = time
-                                                }
-                                        })
-
-                                }
-
-                                if (swing.direction === UP && price <= upperLevel1 && !swing['1.618-Touch']) {
-
-                                        swing['1.618-Touch'] = true
-                                        swing.detailWhenLevelTouch.forEach(entry => {
-        
-                                                if (!entry.notReverse && !entry.reversed) {
-                                                        entry.notReverse = true
-                                                        // entry.notReverseTime = time
-                                                }
-                                        })
-
-                                }
-
-                                return
-                        }
-
-
-
-
-
-
-
-
-
-
-
-                        const fibList = ['1', '0.786', '0.618', '0.5', '0.382', '0.236']
                         for (let fibKey of fibList) {
 
                                 if (swing[fibKey + '-Touch']) break     // no need check other small lavels, because they ware touched already
+                                const currentFibIndex = fibList.findIndex(e => e === fibKey)
 
                                 const swingLength = swing.high - swing.low
                                 let swingWiseLavelZone = 0
@@ -365,94 +249,19 @@ const checkFibLabelTouch = (price, time, EMA) => {
                                         swing.lastReverseFrom = fibKey
 
 
-                                        
-                                        // if (fibKey === '0.5') {
-
-                                        //         // if (!swing['0.5-Touch']) {
-        
-                                        //                 // swing['0.5-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry05) {
-                                        //                                 entry.reEntry05 = true
-                                        //                                 // entry.reEntry05Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        // if (fibKey === '0.618') {
-
-                                        //         // if (!swing['0.618-Touch']) {
-        
-                                        //                 // swing['0.618-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry06) {
-                                        //                                 entry.reEntry06 = true
-                                        //                                 // entry.reEntry06Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        // if (fibKey === '0.786') {
-
-                                        //         // if (!swing['0.786-Touch']) {
-        
-                                        //                 // swing['0.786-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry07) {
-                                        //                                 entry.reEntry07 = true
-                                        //                                 // entry.reEntry07Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        if (fibKey === '1') {
-
-                                                // if (!swing['1-Touch']) {
-        
-                                                        // swing['1-Touch'] = true
-                        
-                                                        swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                                                if (!entry.notReverse && !entry.reversed && !entry.reEntry) {
-                                                                        entry.reEntry = true
-                                                                        // entry.reEntryTime = time
-                                                                }
-                                                        })
-                                                // }
-                                        }
-
-
-
-
-
-
-
-
 
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== START
-
-                                        if (fibKey === '0.786' && EMA === DOWN) {
-
-                                                
 
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL ============= START
 
                                                 const currentSwing = swingListNew[swingListNew.length - 1]
                                                 const previousSwingIndex = currentSwing.direction === UP && currentSwing.end === price ? swingListNew.length - 1 : -1
 
-                                                if (previousSwingIndex > -1) {
+                                                if (previousSwingIndex > -1 && fibKey != '1.618') {
 
                                                         swing.detailWhenLevelTouch.push({
                                                                 fibKey,
+                                                                entryFibLevel: fibKey,
                                                                 // reversedFrom: swing.reversedFrom,
                                                                 levelTouchTime: time,
                                                                 direction: swing.direction,
@@ -477,7 +286,7 @@ const checkFibLabelTouch = (price, time, EMA) => {
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL ============= END
 
 
-                                        }
+                                        // }
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== END
 
 
@@ -503,6 +312,18 @@ const checkFibLabelTouch = (price, time, EMA) => {
 
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= END
 
+                                        // CHECK IS NOT REVERSED FROM LAST TOUCHED LEVEL ============= START
+                                        swing.detailWhenLevelTouch.forEach(entry => {
+                                                
+                                                const entryFibIndex = fibList.findIndex(e => e === entry.entryFibLevel)
+                                                if (!entry.notReverse && !entry.reversed && ( entryFibIndex > currentFibIndex )) {
+                                                        entry.notReverse = true
+                                                        entry.notReverseFibLevel = fibKey
+                                                        // entry.notReverseTime = time
+                                                }
+                                        })
+                                        // CHECK IS NOT REVERSED FROM LAST TOUCHED LEVEL ============= END
+
 
                                         break
                                 }
@@ -523,94 +344,20 @@ const checkFibLabelTouch = (price, time, EMA) => {
 
 
 
-
-
-                                        // if (fibKey === '0.5') {
-
-                                        //         // if (!swing['0.5-Touch']) {
-        
-                                        //                 // swing['0.5-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry05) {
-                                        //                                 entry.reEntry05 = true
-                                        //                                 // entry.reEntry05Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        // if (fibKey === '0.618') {
-
-                                        //         // if (!swing['0.618-Touch']) {
-        
-                                        //                 // swing['0.618-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry06) {
-                                        //                                 entry.reEntry06 = true
-                                        //                                 // entry.reEntry06Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        // if (fibKey === '0.786') {
-
-                                        //         // if (!swing['0.786-Touch']) {
-        
-                                        //                 // swing['0.786-Touch'] = true
-                        
-                                        //                 swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                        //                         if (!entry.notReverse && !entry.reversed && !entry.reEntry07) {
-                                        //                                 entry.reEntry07 = true
-                                        //                                 // entry.reEntry07Time = time
-                                        //                         }
-                                        //                 })
-                                        //         // }
-                                        // }
-
-                                        if (fibKey === '1') {
-
-                                                // if (!swing['1-Touch']) {
-        
-                                                        // swing['1-Touch'] = true
-                        
-                                                        swing.detailWhenLevelTouch.forEach(entry => {
-                        
-                                                                if (!entry.notReverse && !entry.reversed && !entry.reEntry) {
-                                                                        entry.reEntry = true
-                                                                        // entry.reEntryTime = time
-                                                                }
-                                                        })
-                                                // }
-                                        }
-
-
-
-
-
-
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== START
-
-                                        if (fibKey === '0.786' && EMA === UP) {
-                                                
-
 
                                                 // MARK LAST SWING WHEN TOUCH A LEVEL =============START
 
                                                 const currentSwing = swingListNew[swingListNew.length - 1]
                                                 const previousSwingIndex = currentSwing.direction === DOWN && currentSwing.end === price ? swingListNew.length - 1 : -1
 
-                                                if (previousSwingIndex > -1) {
+                                                if (previousSwingIndex > -1 && fibKey != '1.618') {
 
 
                                                 swing.detailWhenLevelTouch.push({
                                                         // INDEX: swing.detailWhenLevelTouch.length,
                                                         fibKey,
+                                                        entryFibLevel: fibKey,
                                                         // reversedFrom: swing.reversedFrom,
                                                         direction: swing.direction,
                                                         levelTouchTime: time,
@@ -637,7 +384,7 @@ const checkFibLabelTouch = (price, time, EMA) => {
 
 
 
-                                        }
+                                        // }
                                         // ADD SWING REVERSED DETAILS TO ANALYSE WHEN IT WILL REVESE AND WHEN WILL NOT =============== END
 
 
@@ -663,6 +410,18 @@ const checkFibLabelTouch = (price, time, EMA) => {
 
                                         // CHECK IS REVERSED FROM LAST TOUCHED LEVEL ============= END
 
+
+                                        // CHECK IS NOT REVERSED FROM LAST TOUCHED LEVEL ============= START
+                                        swing.detailWhenLevelTouch.forEach(entry => {
+                                                
+                                                const entryFibIndex = fibList.findIndex(e => e === entry.entryFibLevel)
+                                                if (!entry.notReverse && !entry.reversed && ( entryFibIndex > currentFibIndex )) {
+                                                        entry.notReverse = true
+                                                        entry.notReverseFibLevel = fibKey
+                                                        // entry.notReverseTime = time
+                                                }
+                                        })
+                                        // CHECK IS NOT REVERSED FROM LAST TOUCHED LEVEL ============= END
 
                                         break
                                 }
@@ -726,26 +485,28 @@ swingListNew.forEach(e => {
 // console.table(notReveseList.filter(e => e.notReverse))
 // console.table(notReveseList.filter(e => e.reversed))
 // console.table(notReveseList.filter(e => e.reversed && !e.reEntry05))
-console.table(notReveseList.map(e => ({
-        // fibKey: e.fibKey,
-        // levelTouchTime: e.levelTouchTime,
-        // direction: e.direction,
-        reversed: e.reversed,
-        notReverse: e.notReverse,
-        swingStart: e.swingStart,
-        swingEnd: e.swingEnd,
-        previousSwingLastReversedFrom: e.previousSwingLastReversedFrom,
-        // reversedTime: e.reversedTime,
-        // reEntry05: e.reEntry05,
-        // reEntry06: e.reEntry06,
-        // reEntry07: e.reEntry07,
-        reEntry10: e.reEntry,
-        secEntry12: e.secEntry,
-        // ...e
-        ema: e.ema,
-        direction: e.direction,
+// console.table(notReveseList.map(e => ({
+//         fibKey: e.fibKey,
+//         // levelTouchTime: e.levelTouchTime,
+//         // direction: e.direction,
+//         reversed: e.reversed,
+//         notReverse: e.notReverse,
+//         // swingStart: e.swingStart,
+//         // swingEnd: e.swingEnd,
+//         // previousSwingLastReversedFrom: e.previousSwingLastReversedFrom,
+//         // reversedTime: e.reversedTime,
+//         // reEntry05: e.reEntry05,
+//         // reEntry06: e.reEntry06,
+//         // reEntry07: e.reEntry07,
+//         // reEntry10: e.reEntry,
+//         // secEntry12: e.secEntry,
+//         // ...e
+//         // ema: e.ema,
+//         // direction: e.direction,
+//         entryFibLevel: e.entryFibLevel,
+//         notReverseFibLevel: e.notReverseFibLevel,
 
-})))
+// })))
 // console.log(swingListNew[10])
 
 
@@ -827,23 +588,6 @@ function fillPriceGaps(priceArray) {
         return filledPrices;
 }
 
-
-
-
-
-// // const finCorpLoan = 5695//8273
-// const finCorpLoan = 8273
-// const kreditBeeLoan = 13735
-// const stashFinLoan = 4171    //Close from EPF
-// const hdfcLoan = 32100
-// const SBICreditCard = 2222
-// const ICICreditCard = 3464
-// // const axisCreditCard = 7348//10743
-// const axisCreditCard = 10743
-// const yesBankLoan = 1200
-// const yesBankCreditCard = 2117
-// const total11 = finCorpLoan + kreditBeeLoan + stashFinLoan + hdfcLoan + SBICreditCard + ICICreditCard + axisCreditCard + yesBankLoan + yesBankCreditCard
-// console.log(total11)
 
 
 
